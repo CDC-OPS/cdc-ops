@@ -1,4 +1,4 @@
-## Hi, We are sorry there is a new upcoming updates please refresh the page after 5 min.
+## Hi, We are sorry there is a new upcoming updates please refresh the page after 2 min.
 
 <!--
 **CDC-OPS/cdc-ops** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
