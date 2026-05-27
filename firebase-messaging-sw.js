@@ -11,13 +11,13 @@ importScripts('https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-comp
 
 // Match the firebase config from the main app
 firebase.initializeApp({
-  apiKey: 'AIzaSyDOMrEPYpUEKVjC9j_2dHN-V_M0EGyAHzc',
+  apiKey: 'AIzaSyDVdVNRuoZNEqtw6iZT6RpRMyJqbKv47EM',
   authDomain: 'fleet-tickets.firebaseapp.com',
   databaseURL: 'https://fleet-tickets-default-rtdb.firebaseio.com',
   projectId: 'fleet-tickets',
   storageBucket: 'fleet-tickets.firebasestorage.app',
   messagingSenderId: '680701889287',
-  appId: '1:680701889287:web:de60f5e29c5e9e6e3a6c8a'
+  appId: '1:680701889287:web:1fb8dc1eda91e1f23193a2'
 });
 
 const messaging = firebase.messaging();
