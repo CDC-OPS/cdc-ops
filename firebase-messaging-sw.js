@@ -6,8 +6,8 @@
 // For GitHub Pages: place it at the repo root alongside index.html.
 // Path becomes: https://cdc-ops.github.io/cdc-ops/firebase-messaging-sw.js
 
-importScripts('https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js');
-importScripts('https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js');
+importScripts('https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js');
+importScripts('https://www.gstatic.com/firebasejs/10.13.2/firebase-messaging-compat.js');
 
 // Match the firebase config from the main app
 firebase.initializeApp({
@@ -61,3 +61,4 @@ self.addEventListener('notificationclick', function(event) {
     })
   );
 });
+
