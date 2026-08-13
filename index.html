@@ -449,6 +449,10 @@ tr.rrow:hover .rnm{color:#4A148C !important;}
 /* Grid lines + row hover highlight for readability (Waiting List, Drivers, Buses) */
 table.wl-table td, table.wl-table th, table.drv-table td, table.drv-table th, table.bus-table td, table.bus-table th{border:1px solid #e8e2ef;}
 table.wl-table tbody tr, table.drv-table tbody tr, table.bus-table tbody tr{transition:background .12s ease;}
+/* v22.3: route chips - hide the remove x until the chip is hovered, so routes are easier to scan. */
+.rchip .rx{opacity:0;transition:opacity .12s ease;}
+.rchip:hover .rx{opacity:1;}
+@media (hover:none){.rchip .rx{opacity:1;}}
 /* v21.4: row hover for the Observations Analysis tables (overlay so it also shows over tinted monthly cells). */
 .aud-an table tbody tr:hover td{background-image:linear-gradient(rgba(123,31,162,.13),rgba(123,31,162,.13)) !important;}
 .aud-an table tbody tr:hover td:first-child{box-shadow:inset 4px 0 0 #7B1FA2;}
@@ -568,7 +572,7 @@ var FB='https://fleet-tickets-default-rtdb.firebaseio.com';
 // value in Firebase; if Firebase is higher, it shows "Updating..." and force-reloads bypassing the
 // browser cache. This fixes the problem where users kept running an old cached version after a deploy
 // (hard-refresh wasn't reliably clearing the cache). It is a tiny read, done once per load.
-var APP_VERSION=22.1;
+var APP_VERSION=22.3;
     // Fleet ticket system is suspended - set to true to re-enable ticket polling (badge, popups, list).
     var FLEET_TICKETS_ENABLED=false;
 function checkForUpdate(){
@@ -2214,9 +2218,9 @@ function RouteChips(p){
   function commit(arr){var seen={},out=[];arr.forEach(function(x){if(x&&!seen[x]){seen[x]=1;out.push(x);}});p.onChange(out.join(','));}
   if(!p.can)return H('span',{style:{fontSize:11}},cur.join(', ')||'--');
   return H('div',{style:{display:'flex',flexWrap:'wrap',gap:3,alignItems:'center',maxWidth:210}},
-    cur.map(function(rt){return H('span',{key:rt,style:{display:'inline-flex',alignItems:'center',gap:2,background:'#EDE7F6',border:'1px solid #B39DDB',borderRadius:10,padding:'1px 5px',fontSize:11,color:'#4A148C',fontWeight:600}},
+    cur.map(function(rt){return H('span',{key:rt,className:'rchip',style:{display:'inline-flex',alignItems:'center',gap:1,background:'#EDE7F6',border:'1px solid #B39DDB',borderRadius:10,padding:'2px 7px',fontSize:13,color:'#4A148C',fontWeight:600}},
       rt,
-      H('span',{onClick:function(){commit(cur.filter(function(x){return x!==rt;}));},title:'remove',style:{cursor:'pointer',color:'#7B1FA2',fontWeight:800,fontSize:12,lineHeight:1}},'\u00d7')
+      H('span',{onClick:function(){commit(cur.filter(function(x){return x!==rt;}));},title:'remove',className:'rx',style:{cursor:'pointer',color:'#7B1FA2',fontWeight:800,fontSize:13,lineHeight:1,marginLeft:1}},'\u00d7')
     );}),
     H('select',{value:'',onChange:function(e){var v=e.target.value;if(v){commit(cur.concat([v]));e.target.value='';}},style:{fontSize:11,border:'1px dashed #B39DDB',borderRadius:8,padding:'1px 3px',color:'#7B1FA2',cursor:'pointer',background:'#fff',minWidth:56}},
       [H('option',{key:'_',value:''},'+ route')].concat(addable.map(function(rt){return H('option',{key:rt,value:rt},rt);})))
@@ -10875,7 +10879,7 @@ function AnnouncementCard(p){
   var myReact=(pendingReact!==null)?(pendingReact||null):(reactions[p.user.code]||null);
   var sSR=useState(false);var showReactors=sSR[0],setShowReactors=sSR[1];
   var effReactions=Object.assign({},reactions);if(pendingReact!==null){if(pendingReact)effReactions[p.user.code]=pendingReact;else delete effReactions[p.user.code];}
-  var _rNames={};try{getActiveStaff().forEach(function(s){_rNames[s.code]=s.name;});}catch(_e){}
+  var _rNames={};try{var _usc=window._unifiedStaffCache||{};Object.keys(_usc).forEach(function(c){if(_usc[c]&&_usc[c].name)_rNames[c]=_usc[c].name;});getActiveStaff().forEach(function(s){if(_rNames[s.code]==null)_rNames[s.code]=s.name;});}catch(_e){}
   var reactorList=Object.keys(effReactions).map(function(c){return {name:_rNames[c]||('#'+c),type:effReactions[c]};});
   function reactCount(type){var n=0;Object.keys(reactions).forEach(function(c){if(c===p.user.code)return;if(reactions[c]===type)n++;});if(myReact===type)n++;return n;}
   function react(type){
@@ -11075,7 +11079,7 @@ function SocialComment(p){
   function reactCount(type){var n=0;Object.keys(reactions).forEach(function(cc){if(cc===user.code)return;if(reactions[cc]===type)n++;});if(myReact===type)n++;return n;}
   function react(type){var next=(myReact===type)?null:type;setPendingReact(next||'');if(next){fs(base+'/reactions/'+user.code,next);}else{fdel(base+'/reactions/'+user.code);}try{snd('ok');}catch(_e){}setTimeout(function(){p.reload&&p.reload();},700);}
   var effReactions=Object.assign({},reactions);if(pendingReact!==null){if(pendingReact)effReactions[user.code]=pendingReact;else delete effReactions[user.code];}
-  var _rNames={};try{getActiveStaff().forEach(function(s){_rNames[s.code]=s.name;});}catch(_e){}
+  var _rNames={};try{var _usc=window._unifiedStaffCache||{};Object.keys(_usc).forEach(function(c){if(_usc[c]&&_usc[c].name)_rNames[c]=_usc[c].name;});getActiveStaff().forEach(function(s){if(_rNames[s.code]==null)_rNames[s.code]=s.name;});}catch(_e){}
   var reactorList=Object.keys(effReactions).map(function(cc){return {name:_rNames[cc]||('#'+cc),type:effReactions[cc]};});
   var RE=[{k:'like',e:'\ud83d\udc4d'},{k:'love',e:'\u2764\ufe0f'},{k:'clap',e:'\ud83d\udc4f'},{k:'laugh',e:'\ud83d\ude02'}];
   var replies=c.replies?Object.keys(c.replies).map(function(k){return Object.assign({_k:k},c.replies[k]);}).sort(function(x,y){return (x.at||0)-(y.at||0);}):[];
@@ -11114,7 +11118,7 @@ function SocialCard(p){
   var myReact=(pendingReact!==null)?(pendingReact||null):(reactions[p.user.code]||null);
   var sSR=useState(false);var showReactors=sSR[0],setShowReactors=sSR[1];
   var effReactions=Object.assign({},reactions);if(pendingReact!==null){if(pendingReact)effReactions[p.user.code]=pendingReact;else delete effReactions[p.user.code];}
-  var _rNames={};try{getActiveStaff().forEach(function(s){_rNames[s.code]=s.name;});}catch(_e){}
+  var _rNames={};try{var _usc=window._unifiedStaffCache||{};Object.keys(_usc).forEach(function(c){if(_usc[c]&&_usc[c].name)_rNames[c]=_usc[c].name;});getActiveStaff().forEach(function(s){if(_rNames[s.code]==null)_rNames[s.code]=s.name;});}catch(_e){}
   var reactorList=Object.keys(effReactions).map(function(c){return {name:_rNames[c]||('#'+c),type:effReactions[c]};});
   function reactCount(type){var n=0;Object.keys(reactions).forEach(function(c){if(c===p.user.code)return;if(reactions[c]===type)n++;});if(myReact===type)n++;return n;}
   function react(type){var next=(myReact===type)?null:type;setPendingReact(next||'');if(next){fs('/cdc_ops/social/'+a._k+'/reactions/'+p.user.code,next);}else{fdel('/cdc_ops/social/'+a._k+'/reactions/'+p.user.code);}try{snd('ok');}catch(_e){}setTimeout(function(){p.reload&&p.reload();},700);}
